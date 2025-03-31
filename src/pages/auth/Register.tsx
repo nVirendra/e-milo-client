@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { registerUser } from '../../services/auth.service';
 
 const Register: React.FC = () => {
   const [form, setForm] = useState({
@@ -9,13 +11,37 @@ const Register: React.FC = () => {
     confirmPassword: '',
   });
 
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Registering user:', form);
+
+    if (form.password !== form.confirmPassword) {
+      alert("Passwords don't match");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const { data } = await registerUser({
+        name: form.name,
+        email: form.email,
+        password: form.password,
+      });
+
+      login(data.user, data.token);
+      navigate('/');
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Registration failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -85,9 +111,10 @@ const Register: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-bold shadow-lg hover:opacity-90 transition duration-300"
+              disabled={loading}
+              className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-bold shadow-lg hover:opacity-90 transition duration-300 disabled:opacity-50"
             >
-              Create Account
+              {loading ? 'Creating Account...' : 'Create Account'}
             </button>
           </form>
 
