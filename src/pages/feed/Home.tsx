@@ -48,9 +48,10 @@ const Home: React.FC = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
         {/* Enhanced Topbar */}
         <header className="w-full px-6 py-4 bg-white/80 dark:bg-gray-800/90 backdrop-blur-md shadow-sm flex items-center justify-between sticky top-0 z-50">
-          <span className="bg-blue-500 px-3 py-1 rounded-xl shadow-md text-white font-bold text-lg">
+          <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 px-3 py-1 rounded-xl shadow-md text-white font-bold text-lg tracking-wide hover:brightness-110 transition-all duration-300">
             E-milo
           </span>
+
           <div className="flex items-center gap-5">
             <FiSearch className="w-5 h-5 text-gray-600 dark:text-gray-300 hover:text-purple-600 cursor-pointer transition-colors" />
             <div className="flex items-center gap-4">
@@ -101,7 +102,7 @@ const Home: React.FC = () => {
                   <div className="text-sm text-gray-500">Following</div>
                 </div>
               </div>
-              <button className="w-full bg-gradient-to-r from-purple-600 to-blue-500 text-white font-semibold py-3 rounded-xl hover:shadow-lg transition-all">
+              <button className="w-full bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 text-white font-semibold py-3 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:brightness-110">
                 View Profile
               </button>
             </div>
@@ -150,7 +151,7 @@ const Home: React.FC = () => {
                     </button>
                   ))}
                 </div>
-                <button className="bg-gradient-to-r from-purple-600 to-blue-500 text-white px-6 py-2.5 rounded-xl hover:shadow-lg transition-all">
+                <button className="bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 text-white px-6 py-2.5 rounded-xl hover:shadow-lg transition-all">
                   Post
                 </button>
               </div>

@@ -11,7 +11,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700 dark:from-gray-900 dark:to-gray-800 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 dark:from-gray-900 dark:to-gray-800 px-4">
       <div className="flex flex-col md:flex-row items-center w-full max-w-5xl bg-white/20 dark:bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl overflow-hidden">
         {/* Left Visual */}
         <div
@@ -27,7 +27,7 @@ const Login: React.FC = () => {
           {/* E-milo Logo */}
           <div className="mb-6">
             <h1 className="text-2xl font-extrabold text-white tracking-wide">
-              <span className="bg-blue-500 px-3 py-1 rounded-xl shadow-md">
+              <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 px-3 py-1 rounded-xl shadow-md">
                 E-milo
               </span>
             </h1>
@@ -61,7 +61,7 @@ const Login: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-bold shadow-lg hover:opacity-90 transition duration-300"
+              className="w-full py-3 bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 text-white rounded-xl font-bold shadow-lg hover:opacity-90 transition duration-300"
             >
               Sign In
             </button>
