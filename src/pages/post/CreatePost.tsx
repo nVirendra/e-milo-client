@@ -9,6 +9,7 @@ export default function CreatePost() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
 
+  console.log(content, mediaFile, isPrivate);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,9 +28,9 @@ export default function CreatePost() {
 
     const formData = new FormData();
     formData.append('content', content);
-    formData.append('isPrivate', String(isPrivate));
+    formData.append('is_private', String(isPrivate));
     if (mediaFile) {
-      formData.append('media', mediaFile);
+      formData.append('file', mediaFile);
     }
 
     try {
