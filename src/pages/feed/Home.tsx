@@ -18,7 +18,24 @@ const Home: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [posts, setPosts] = useState([
-    // ... existing posts array
+    {
+      id: 1,
+      user: 'Virendra',
+      content: 'Working on exciting new projects! 🚀',
+      image: 'https://source.unsplash.com/featured/?developer',
+      likes: 42,
+      liked: false,
+      comments: ['Looking great!', 'Awesome work!'],
+    },
+    {
+      id: 2,
+      user: 'Jane',
+      content: 'Sunset vibes 🌅 #naturelover',
+      image: 'https://source.unsplash.com/featured/?sunset',
+      likes: 89,
+      liked: true,
+      comments: ['Beautiful capture!'],
+    },
   ]);
 
   const [users, setUsers] = useState([
@@ -40,7 +57,17 @@ const Home: React.FC = () => {
   ]);
 
   const toggleLike = (id: number) => {
-    // ... existing toggleLike implementation
+    setPosts((prev) =>
+      prev.map((post) =>
+        post.id === id
+          ? {
+              ...post,
+              liked: !post.liked,
+              likes: post.liked ? post.likes - 1 : post.likes + 1,
+            }
+          : post
+      )
+    );
   };
 
   return (
@@ -161,48 +188,101 @@ const Home: React.FC = () => {
             {posts.map((post) => (
               <div
                 key={post.id}
-                className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 transition-all hover:shadow-xl"
+                className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 transition-all hover:shadow-2xl border border-gray-100 dark:border-gray-700"
               >
                 <div className="flex items-center gap-3 mb-4">
                   <img
                     src="https://source.unsplash.com/featured/?person"
-                    className="w-10 h-10 rounded-full"
+                    className="w-12 h-12 rounded-full border-2 border-purple-500"
                     alt="User"
                   />
                   <div>
-                    <h3 className="font-semibold">{post.user}</h3>
-                    <p className="text-sm text-gray-500">2h ago</p>
+                    <h3 className="font-semibold text-lg text-gray-800 dark:text-white">
+                      {post.user}
+                    </h3>
+                    <p className="text-sm text-gray-500">2h ago · 🌍 Public</p>
                   </div>
                 </div>
-                <p className="mb-4 text-gray-700 dark:text-gray-300">
+                <p className="mb-4 text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
                   {post.content}
                 </p>
                 {post.image && (
                   <img
                     src={post.image}
                     alt="Post"
-                    className="rounded-xl w-full mb-4 object-cover h-96"
+                    className="rounded-xl w-full mb-4 object-cover h-96 border border-gray-200 dark:border-gray-600"
                   />
                 )}
-                <div className="flex items-center gap-6 text-gray-500">
+                <div className="flex items-center gap-6 text-gray-500 pt-4 border-t border-gray-100 dark:border-gray-700">
+                  {/* Like Button */}
                   <button
                     onClick={() => toggleLike(post.id)}
-                    className="flex items-center gap-2 hover:text-pink-500 transition-colors"
+                    className="flex items-center gap-2 group"
                   >
-                    <FiHeart
-                      className={`w-5 h-5 ${
+                    <div className="p-2 rounded-full transition-colors group-hover:bg-purple-100 dark:group-hover:bg-gray-700">
+                      <FiHeart
+                        className={`w-6 h-6 transition-colors ${
+                          post.liked
+                            ? 'text-red-500 fill-red-500'
+                            : 'text-red-500 border-2 border-red-500 rounded-full p-1'
+                        } group-hover:text-purple-600`}
+                      />
+                    </div>
+                    <span
+                      className={`font-medium transition-colors ${
                         post.liked
-                          ? 'text-pink-500 fill-current animate-heartbeat'
-                          : ''
+                          ? 'text-red-500'
+                          : 'text-gray-600 group-hover:text-purple-600'
                       }`}
-                    />
-                    <span>{post.likes}</span>
+                    >
+                      {post.likes}
+                    </span>
                   </button>
-                  <button className="flex items-center gap-2 hover:text-blue-500 transition-colors">
-                    <FiMessageSquare className="w-5 h-5" />
-                    <span>{post.comments.length}</span>
+
+                  {/* Comment Button */}
+                  <button className="flex items-center gap-2 group">
+                    <div className="p-2 rounded-full transition-colors group-hover:bg-purple-100 dark:group-hover:bg-gray-700">
+                      <FiMessageSquare className="w-6 h-6 text-blue-500 group-hover:text-purple-600 transition-colors" />
+                    </div>
+                    <span className="font-medium text-gray-600 group-hover:text-purple-600">
+                      {post.comments.length}
+                    </span>
                   </button>
                 </div>
+
+                {/* Comments Section */}
+                {post.comments.length > 0 && (
+                  <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700 space-y-4">
+                    {post.comments.map((comment, index) => (
+                      <div key={index} className="flex items-start gap-3">
+                        <img
+                          src="https://source.unsplash.com/featured/?user"
+                          className="w-8 h-8 rounded-full"
+                          alt="Commenter"
+                        />
+                        <div className="flex-1">
+                          <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-3">
+                            <div className="font-medium text-sm text-purple-600 dark:text-purple-400">
+                              User {index + 1}
+                            </div>
+                            <p className="text-gray-600 dark:text-gray-300">
+                              {comment}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-4 mt-2 ml-3 text-xs text-gray-400">
+                            <button className="hover:text-purple-600">
+                              Like
+                            </button>
+                            <button className="hover:text-purple-600">
+                              Reply
+                            </button>
+                            <span>1h</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </section>
