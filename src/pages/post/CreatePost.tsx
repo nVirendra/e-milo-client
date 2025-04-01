@@ -10,7 +10,6 @@ export default function CreatePost() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
 
-  console.log(content, mediaFile, isPrivate);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {

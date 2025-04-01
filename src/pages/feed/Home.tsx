@@ -7,7 +7,6 @@ import { useAuth } from '../../context/AuthContext';
 
 const Home: React.FC = () => {
   const { user } = useAuth();
-  console.log('authUser: ', user);
 
   const [darkMode, setDarkMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
