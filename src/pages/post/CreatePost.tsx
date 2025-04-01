@@ -34,6 +34,7 @@ export default function CreatePost() {
     }
 
     try {
+      console.log('before api call');
       await createPost(formData);
       setContent('');
       setMediaFile(null);

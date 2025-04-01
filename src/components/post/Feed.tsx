@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import PostCard from '../post/PostCard';
 import CreatePost from '../../pages/post/CreatePost';
-import { fetchFeed } from '../../services/post.service';
+import { fetchFeed, likePost } from '../../services/post.service';
+import { useAuth } from '../../context/AuthContext';
+//import { useAuth } from '../../context/AuthContext';
 
 interface Post {
   id: number;
@@ -15,6 +17,8 @@ interface Post {
 }
 
 const Feed: React.FC = () => {
+  const { user } = useAuth();
+  console.log('auth user', user.id);
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
@@ -28,7 +32,7 @@ const Feed: React.FC = () => {
           image: post.mediaType === 'image' ? post.mediaUrl : '',
           video: post.mediaType === 'video' ? post.mediaUrl : '',
           likes: post.likes.length,
-          liked: post.likes.includes(/* currentUserId */), // update this once you implement auth
+          liked: post.likes.includes(user.id),
           comments: post.comments.map((c: any) => c.comment),
           privacy: post.privacy,
           createdAt: post.createdAt,
@@ -43,18 +47,38 @@ const Feed: React.FC = () => {
     fetchPosts();
   }, []);
 
-  const toggleLike = (id: number) => {
-    setPosts((prev) =>
-      prev.map((post) =>
-        post.id === id
-          ? {
-              ...post,
-              liked: !post.liked,
-              likes: post.liked ? post.likes - 1 : post.likes + 1,
-            }
-          : post
-      )
-    );
+  const toggleLike = async (id: number) => {
+    try {
+      // Optimistically update UI
+      setPosts((prev) =>
+        prev.map((post) =>
+          post.id === id
+            ? {
+                ...post,
+                liked: !post.liked,
+                likes: post.liked ? post.likes - 1 : post.likes + 1,
+              }
+            : post
+        )
+      );
+
+      // Send API request
+      await likePost(id.toString());
+    } catch (error) {
+      console.error('Error liking post:', error);
+      // Optionally revert UI on failure
+      setPosts((prev) =>
+        prev.map((post) =>
+          post.id === id
+            ? {
+                ...post,
+                liked: !post.liked,
+                likes: post.liked ? post.likes + 1 : post.likes - 1,
+              }
+            : post
+        )
+      );
+    }
   };
 
   return (

@@ -20,7 +20,7 @@ interface PostCardProps {
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post, toggleLike }) => {
-  console.log(post);
+  console.log('this post', post);
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 transition-all hover:shadow-2xl border border-gray-100 dark:border-gray-700">
       <div className="flex items-center gap-3 mb-4">
