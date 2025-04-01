@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   FiHome,
   FiUser,
@@ -12,11 +12,32 @@ import {
   FiCamera,
   FiMapPin,
   FiClock,
+  FiChevronDown,
+  FiLogOut,
 } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
 const Home: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const [posts, setPosts] = useState([
     {
       id: 1,
@@ -82,13 +103,32 @@ const Home: React.FC = () => {
           <div className="flex items-center gap-5">
             <FiSearch className="w-5 h-5 text-gray-600 dark:text-gray-300 hover:text-purple-600 cursor-pointer transition-colors" />
             <div className="flex items-center gap-4">
-              {[FiHome, FiBell, FiUser].map((Icon, index) => (
+              {[FiHome, FiBell].map((Icon, index) => (
                 <Icon
                   key={index}
                   className="w-6 h-6 text-gray-600 dark:text-gray-300 hover:text-purple-600 cursor-pointer transition-colors"
                 />
               ))}
             </div>
+            <div
+              className="relative flex items-center gap-1 cursor-pointer"
+              onClick={() => setShowDropdown(!showDropdown)}
+            >
+              <FiUser className="w-6 h-6 text-gray-600 dark:text-gray-300 hover:text-purple-600 transition-colors" />
+              <FiChevronDown className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+            </div>
+            {/* Dropdown menu */}
+            {showDropdown && (
+              <div className="absolute right-0 top-10 w-40 bg-white dark:bg-gray-800 shadow-lg rounded-xl p-2 z-50">
+                <button
+                  onClick={() => navigate('/logout')}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md flex items-center gap-2"
+                >
+                  <FiLogOut /> Logout
+                </button>
+              </div>
+            )}
+
             <button
               onClick={() => setDarkMode(!darkMode)}
               className="ml-4 p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"

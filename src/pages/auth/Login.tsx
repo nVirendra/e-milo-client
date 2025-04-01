@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginUser } from '../../services/auth.service';
 import { useAuth } from '../../context/AuthContext';
+import { loginSchema } from '../../schemas/auth.schema';
+import { toast } from 'react-toastify';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -13,13 +15,20 @@ const Login: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    const result = loginSchema.safeParse({ email, password });
+
+    if (!result.success) {
+      result.error.errors.forEach((err) => toast.error(err.message));
+      return;
+    }
     setLoading(true);
     try {
       const { data } = await loginUser({ email, password });
       login(data.user, data.token);
+      toast.success('Login successful!');
       navigate('/');
     } catch (error: any) {
-      alert(error?.response?.data?.message || 'Login failed');
+      toast.error(error?.response?.data?.message || 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -62,7 +71,6 @@ const Login: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 rounded-xl bg-white/80 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-600 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
             />
 
             <input

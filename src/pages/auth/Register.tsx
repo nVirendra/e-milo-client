@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { registerUser } from '../../services/auth.service';
+import { registerSchema } from '../../schemas/auth.schema';
+import { toast } from 'react-toastify';
 
 const Register: React.FC = () => {
   const [form, setForm] = useState({
@@ -22,8 +24,9 @@ const Register: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (form.password !== form.confirmPassword) {
-      alert("Passwords don't match");
+    const result = registerSchema.safeParse(form);
+    if (!result.success) {
+      result.error.errors.forEach((err) => toast.error(err.message));
       return;
     }
 
@@ -36,9 +39,10 @@ const Register: React.FC = () => {
       });
 
       login(data.user, data.token);
+      toast.success('Registration successful!');
       navigate('/');
     } catch (error: any) {
-      alert(error.response?.data?.message || 'Registration failed');
+      toast.error(error?.response?.data?.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
@@ -79,7 +83,6 @@ const Register: React.FC = () => {
               value={form.name}
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-xl bg-white/80 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-600 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
             />
             <input
               name="email"
@@ -88,7 +91,6 @@ const Register: React.FC = () => {
               value={form.email}
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-xl bg-white/80 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-600 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
-              required
             />
             <input
               name="password"
@@ -97,7 +99,6 @@ const Register: React.FC = () => {
               value={form.password}
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-xl bg-white/80 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-600 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
-              required
             />
             <input
               name="confirmPassword"
@@ -106,7 +107,6 @@ const Register: React.FC = () => {
               value={form.confirmPassword}
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-xl bg-white/80 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-600 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
             />
 
             <button
