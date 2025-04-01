@@ -33,7 +33,10 @@ const Feed: React.FC = () => {
           video: post.mediaType === 'video' ? post.mediaUrl : '',
           likes: post.likes.length,
           liked: post.likes.includes(user.id),
-          comments: post.comments.map((c: any) => c.comment),
+          comments: post.comments.map((c: any) => ({
+            name: c.userId?.name || 'User',
+            comment: c.comment,
+          })),
           privacy: post.privacy,
           createdAt: post.createdAt,
         }));

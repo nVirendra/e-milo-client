@@ -1,7 +1,13 @@
-// PostCard.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { FiHeart, FiMessageSquare, FiLock, FiGlobe } from 'react-icons/fi';
 import defaultUser from '/src/assets/default-user.png';
+import { commentPost } from '../../services/post.service';
+import { useAuth } from '../../context/AuthContext';
+
+interface Comment {
+  name: string;
+  comment: string;
+}
 
 interface Post {
   id: number;
@@ -11,7 +17,7 @@ interface Post {
   image?: string;
   likes: number;
   liked: boolean;
-  comments: string[];
+  comments: Comment[];
 }
 
 interface PostCardProps {
@@ -20,9 +26,28 @@ interface PostCardProps {
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post, toggleLike }) => {
-  console.log('this post', post);
+  const { user } = useAuth();
+  const [showCommentInput, setShowCommentInput] = useState(false);
+  const [commentText, setCommentText] = useState('');
+  const [localComments, setLocalComments] = useState<Comment[]>(post.comments);
+
+  const handleCommentSubmit = async () => {
+    if (!commentText.trim()) return;
+    try {
+      await commentPost(post.id.toString(), commentText);
+      setLocalComments([
+        ...localComments,
+        { name: user?.name || 'Anonymous', comment: commentText },
+      ]);
+      setCommentText('');
+    } catch (err) {
+      console.error('Failed to post comment:', err);
+    }
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 transition-all hover:shadow-2xl border border-gray-100 dark:border-gray-700">
+      {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <img
           src={defaultUser}
@@ -48,6 +73,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, toggleLike }) => {
           </p>
         </div>
       </div>
+
+      {/* Content */}
       <p className="mb-4 text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
         {post.content}
       </p>
@@ -58,6 +85,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, toggleLike }) => {
           className="rounded-xl w-full mb-4 object-cover h-96 border border-gray-200 dark:border-gray-600"
         />
       )}
+
+      {/* Action Buttons */}
       <div className="flex items-center gap-6 text-gray-500 pt-4 border-t border-gray-100 dark:border-gray-700">
         <button
           onClick={() => toggleLike(post.id)}
@@ -82,32 +111,57 @@ const PostCard: React.FC<PostCardProps> = ({ post, toggleLike }) => {
             {post.likes}
           </span>
         </button>
-        <button className="flex items-center gap-2 group">
+
+        <button
+          onClick={() => setShowCommentInput(!showCommentInput)}
+          className="flex items-center gap-2 group"
+        >
           <div className="p-2 rounded-full transition-colors group-hover:bg-purple-100 dark:group-hover:bg-gray-700">
             <FiMessageSquare className="w-6 h-6 text-blue-500 group-hover:text-purple-600 transition-colors" />
           </div>
           <span className="font-medium text-gray-600 group-hover:text-purple-600">
-            {post.comments.length}
+            {localComments.length}
           </span>
         </button>
       </div>
 
+      {/* Comment Input */}
+      {showCommentInput && (
+        <div className="mt-4 flex items-center gap-2">
+          <input
+            type="text"
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            placeholder="Write a comment..."
+            className="flex-1 px-4 py-2 rounded-xl border dark:border-gray-700 bg-gray-100 dark:bg-gray-700 text-sm focus:outline-none"
+          />
+          <button
+            onClick={handleCommentSubmit}
+            className="bg-purple-500 text-white px-4 py-2 rounded-xl hover:bg-purple-600 transition-colors text-sm"
+          >
+            Send
+          </button>
+        </div>
+      )}
+
       {/* Comments Section */}
-      {post.comments.length > 0 && (
+      {localComments.length > 0 && (
         <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700 space-y-4">
-          {post.comments.map((comment, index) => (
+          {localComments.map((commentObj, index) => (
             <div key={index} className="flex items-start gap-3">
               <img
-                src="https://source.unsplash.com/featured/?user"
+                src={defaultUser}
                 className="w-8 h-8 rounded-full"
                 alt="Commenter"
               />
               <div className="flex-1">
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-3">
                   <div className="font-medium text-sm text-purple-600 dark:text-purple-400">
-                    User {index + 1}
+                    {commentObj.name}
                   </div>
-                  <p className="text-gray-600 dark:text-gray-300">{comment}</p>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    {commentObj.comment}
+                  </p>
                 </div>
                 <div className="flex items-center gap-4 mt-2 ml-3 text-xs text-gray-400">
                   <button className="hover:text-purple-600">Like</button>
