@@ -1,13 +1,28 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { loginUser } from '../../services/auth.service';
+import { useAuth } from '../../context/AuthContext';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login with:', { email, password });
+    setLoading(true);
+    try {
+      const { data } = await loginUser({ email, password });
+      login(data.user, data.token);
+      navigate('/');
+    } catch (error: any) {
+      alert(error?.response?.data?.message || 'Login failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -61,9 +76,10 @@ const Login: React.FC = () => {
 
             <button
               type="submit"
+              disabled={loading}
               className="w-full py-3 bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 text-white rounded-xl font-bold shadow-lg hover:opacity-90 transition duration-300"
             >
-              Sign In
+              {loading ? 'Signing In...' : 'Sign In'}
             </button>
           </form>
 
