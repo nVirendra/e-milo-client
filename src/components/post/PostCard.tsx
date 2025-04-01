@@ -1,6 +1,7 @@
 // PostCard.tsx
 import React from 'react';
 import { FiHeart, FiMessageSquare } from 'react-icons/fi';
+import defaultUser from '/src/assets/default-user.png';
 
 interface Post {
   id: number;
@@ -18,11 +19,12 @@ interface PostCardProps {
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post, toggleLike }) => {
+  console.log(post);
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 transition-all hover:shadow-2xl border border-gray-100 dark:border-gray-700">
       <div className="flex items-center gap-3 mb-4">
         <img
-          src="https://source.unsplash.com/featured/?person"
+          src={defaultUser}
           className="w-12 h-12 rounded-full border-2 border-purple-500"
           alt="User"
         />
@@ -30,7 +32,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, toggleLike }) => {
           <h3 className="font-semibold text-lg text-gray-800 dark:text-white">
             {post.user}
           </h3>
-          <p className="text-sm text-gray-500">2h ago · 🌍 Public</p>
+          <p className="text-sm text-gray-500">2h ago · 🌍 {post.privacy}</p>
         </div>
       </div>
       <p className="mb-4 text-gray-700 dark:text-gray-300 text-lg leading-relaxed">

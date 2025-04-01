@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { FiCamera, FiMapPin, FiLock, FiGlobe } from 'react-icons/fi';
 import { createPost } from '../../services/post.service';
 import { toast } from 'react-toastify';
+import defaultUser from '/src/assets/default-user.png';
 
 export default function CreatePost() {
   const [content, setContent] = useState('');
@@ -51,7 +52,7 @@ export default function CreatePost() {
       {/* Top Section */}
       <div className="flex items-start gap-4 mb-4">
         <img
-          src="https://source.unsplash.com/featured/?person"
+          src={defaultUser}
           className="w-12 h-12 rounded-full border-2 border-purple-500"
           alt="User"
         />

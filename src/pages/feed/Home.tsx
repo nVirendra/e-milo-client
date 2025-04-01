@@ -1,33 +1,16 @@
 import React, { useState } from 'react';
 import { FiSearch } from 'react-icons/fi';
 import Header from '../../components/layout/Header';
-import CreatePost from '../post/CreatePost';
-import PostCard from '../../components/post/PostCard';
+import Feed from '../../components/post/Feed';
+import defaultUser from '/src/assets/default-user.png';
+import { useAuth } from '../../context/AuthContext';
 
 const Home: React.FC = () => {
+  const { user } = useAuth();
+  console.log('authUser: ', user);
+
   const [darkMode, setDarkMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      user: 'Virendra',
-      content: 'Working on exciting new projects! 🚀',
-      image: 'https://source.unsplash.com/featured/?developer',
-      likes: 42,
-      liked: false,
-      comments: ['Looking great!', 'Awesome work!'],
-    },
-    {
-      id: 2,
-      user: 'Jane',
-      content: 'Sunset vibes 🌅 #naturelover',
-      image: 'https://source.unsplash.com/featured/?sunset',
-      likes: 89,
-      liked: true,
-      comments: ['Beautiful capture!'],
-    },
-  ]);
 
   const [users, setUsers] = useState([
     {
@@ -47,20 +30,6 @@ const Home: React.FC = () => {
     // Add more users as needed
   ]);
 
-  const toggleLike = (id: number) => {
-    setPosts((prev) =>
-      prev.map((post) =>
-        post.id === id
-          ? {
-              ...post,
-              liked: !post.liked,
-              likes: post.liked ? post.likes - 1 : post.likes + 1,
-            }
-          : post
-      )
-    );
-  };
-
   return (
     <div className={darkMode ? 'dark' : ''}>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
@@ -72,12 +41,12 @@ const Home: React.FC = () => {
             <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg transition-all hover:shadow-xl">
               <div className="flex items-center gap-4 mb-6">
                 <img
-                  src="https://source.unsplash.com/featured/?person"
+                  src={defaultUser}
                   className="w-16 h-16 rounded-full border-2 border-purple-500 p-1"
                   alt="Profile"
                 />
                 <div>
-                  <h2 className="font-bold text-lg">Yash Roy</h2>
+                  <h2 className="font-bold text-lg">{user?.name}</h2>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
                     Software Engineer
                   </p>
@@ -94,19 +63,14 @@ const Home: React.FC = () => {
                 </div>
               </div>
               <button className="w-full bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 text-white font-semibold py-3 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:brightness-110">
-                View Profile
+                My Profile
               </button>
             </div>
           </aside>
 
           {/* Enhanced Feed Section */}
           <section className="lg:col-span-6 space-y-6">
-            {/* Create Post Card */}
-            <CreatePost />
-
-            {posts.map((post) => (
-              <PostCard key={post.id} post={post} toggleLike={toggleLike} />
-            ))}
+            <Feed />
           </section>
 
           {/* Enhanced Right Sidebar */}
@@ -134,7 +98,7 @@ const Home: React.FC = () => {
                   >
                     <div className="flex items-center gap-3">
                       <img
-                        src={`https://source.unsplash.com/featured/?${user.img}`}
+                        src={defaultUser}
                         className="w-10 h-10 rounded-full border-2 border-transparent group-hover:border-purple-500 transition-all"
                         alt=""
                       />
