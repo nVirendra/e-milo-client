@@ -26,6 +26,7 @@ const UserProfile = () => {
   }, [userId]);
 
   const handleFollow = async () => {
+    console.log('profile', profile);
     if (!profile) return;
     const res = profile.isFollowing
       ? await unfollowUser(userId)
