@@ -3,7 +3,6 @@ import PostCard from '../post/PostCard';
 import CreatePost from '../../pages/post/CreatePost';
 import { fetchFeed, likePost } from '../../services/post.service';
 import { useAuth } from '../../context/AuthContext';
-//import { useAuth } from '../../context/AuthContext';
 
 interface Post {
   id: number;
@@ -18,7 +17,6 @@ interface Post {
 
 const Feed: React.FC = () => {
   const { user } = useAuth();
-  console.log('auth user', user.id);
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {

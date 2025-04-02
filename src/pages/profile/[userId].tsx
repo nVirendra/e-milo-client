@@ -1,6 +1,5 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-
 import {
   getUserProfile,
   followUser,
@@ -10,6 +9,8 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import ProfileHeader from '../../components/profile/ProfileHeader';
 import UserPosts from '../../components/profile/UserPosts';
+import MainLayout from '../../layouts/MainLayout';
+import { likePost } from '../../services/post.service';
 
 const UserProfile = () => {
   const { userId } = useParams();
@@ -34,15 +35,54 @@ const UserProfile = () => {
 
   if (!profile) return <div>Loading...</div>;
 
+  const toggleLike = async (postId: number) => {
+    try {
+      // Optimistic update
+      setPosts((prev) =>
+        prev.map((post) =>
+          post._id === postId
+            ? {
+                ...post,
+                likes: post.likes.includes(user.id)
+                  ? post.likes.filter((id: string) => id !== user.id)
+                  : [...post.likes, user.id],
+                liked: !post.likes.includes(user.id),
+              }
+            : post
+        )
+      );
+
+      await likePost(postId.toString());
+    } catch (error) {
+      console.error('Error liking post:', error);
+      // Revert on error
+      setPosts((prev) =>
+        prev.map((post) =>
+          post._id === postId
+            ? {
+                ...post,
+                likes: post.likes.includes(user.id)
+                  ? post.likes.filter((id: string) => id !== user.id)
+                  : [...post.likes, user.id],
+                liked: !post.likes.includes(user.id),
+              }
+            : post
+        )
+      );
+    }
+  };
+
   return (
-    <div className="container mx-auto px-4 py-6">
-      <ProfileHeader
-        profile={profile}
-        onFollowToggle={handleFollow}
-        isMe={user._id === userId}
-      />
-      <UserPosts posts={posts} />
-    </div>
+    <MainLayout>
+      <section className="lg:col-span-8 lg:col-start-3 space-y-6">
+        <ProfileHeader
+          profile={profile}
+          onFollowToggle={handleFollow}
+          isMe={user._id === userId}
+        />
+        <UserPosts posts={posts} toggleLike={toggleLike} />
+      </section>
+    </MainLayout>
   );
 };
 
