@@ -1,33 +1,28 @@
-import React, { useState } from 'react';
-import { FiSearch } from 'react-icons/fi';
+import React, { useState, useEffect } from 'react';
 import Header from '../../components/layout/Header';
 import Feed from '../../components/post/Feed';
 import defaultUser from '/src/assets/default-user.png';
 import { useAuth } from '../../context/AuthContext';
-
+import SearchSidebar from '../search/Search';
+import { fetchUsers } from '../../services/user.service';
 const Home: React.FC = () => {
   const { user } = useAuth();
 
   const [darkMode, setDarkMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      name: 'Payal SK',
-      avatar: 'https://source.unsplash.com/featured/?woman',
-      followers: 1420,
-      following: false,
-    },
-    {
-      id: 2,
-      name: 'Ritesh Kumar',
-      avatar: 'https://source.unsplash.com/featured/?man',
-      followers: 2560,
-      following: true,
-    },
-    // Add more users as needed
-  ]);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      fetchUsers(searchQuery).then((res) => {
+        console.log('user data', res.data);
+        setUsers(res.data);
+      });
+    }, 300); // debounce for better UX
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchQuery]);
 
   return (
     <div className={darkMode ? 'dark' : ''}>
@@ -74,51 +69,11 @@ const Home: React.FC = () => {
 
           {/* Enhanced Right Sidebar */}
           {/* Right Sidebar - Updated to Search Section */}
-          <aside className="lg:col-span-3 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg sticky top-20 h-fit">
-            <div className="relative mb-6">
-              <FiSearch className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search users..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* Suggested Users */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg">
-              <h3 className="font-bold text-lg mb-4">Suggested for You</h3>
-              <div className="space-y-4">
-                {users.map((user, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={defaultUser}
-                        className="w-10 h-10 rounded-full border-2 border-transparent group-hover:border-purple-500 transition-all"
-                        alt=""
-                      />
-                      <span className="group-hover:text-purple-600 transition-colors">
-                        {user.name}
-                      </span>
-                    </div>
-                    <button
-                      className={`text-sm px-4 py-1.5 rounded-full ${
-                        user.status === 'follow'
-                          ? 'bg-purple-500 text-white hover:bg-purple-600'
-                          : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                      } transition-colors`}
-                    >
-                      {user.status === 'follow' ? 'Follow' : 'Following'}
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </aside>
+          <SearchSidebar
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            users={users}
+          />
         </main>
       </div>
     </div>
