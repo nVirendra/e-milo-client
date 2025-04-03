@@ -56,7 +56,7 @@ const SearchSidebar: React.FC<SearchSidebarProps> = ({
                   {user.name}
                 </span>
               </Link>
-              <button
+              {/* <button
                 className={`text-sm px-4 py-1.5 rounded-full ${
                   user.status === 'follow'
                     ? 'bg-purple-500 text-white hover:bg-purple-600'
@@ -64,7 +64,7 @@ const SearchSidebar: React.FC<SearchSidebarProps> = ({
                 } transition-colors`}
               >
                 {user.status === 'follow' ? 'Follow' : 'Following'}
-              </button>
+              </button> */}
             </div>
           ))}
         </div>
