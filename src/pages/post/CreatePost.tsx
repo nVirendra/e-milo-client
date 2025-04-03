@@ -4,11 +4,16 @@ import { createPost } from '../../services/post.service';
 import { toast } from 'react-toastify';
 import defaultUser from '/src/assets/default-user.png';
 
-export default function CreatePost() {
+interface CreatePostProps {
+  onPostCreated: (newPost: any) => void;
+}
+
+const CreatePost: React.FC<CreatePostProps> = ({ onPostCreated }) => {
   const [content, setContent] = useState('');
   const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -34,8 +39,13 @@ export default function CreatePost() {
     }
 
     try {
-      console.log('before api call');
-      await createPost(formData);
+      setIsLoading(true);
+      const { data: newPost } = await createPost(formData);
+
+      // Notify Feed
+      onPostCreated(newPost);
+
+      // Reset form
       setContent('');
       setMediaFile(null);
       setPreviewUrl(null);
@@ -44,12 +54,13 @@ export default function CreatePost() {
     } catch (error) {
       console.error('Post creation failed:', error);
       toast.error('Something went wrong!');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-6 transition-all hover:shadow-2xl border border-gray-100 dark:border-gray-700">
-      {/* Top Section */}
       <div className="flex items-start gap-4 mb-4">
         <img
           src={defaultUser}
@@ -64,7 +75,6 @@ export default function CreatePost() {
         />
       </div>
 
-      {/* Media Preview */}
       {previewUrl && (
         <div className="mb-4 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-600">
           {mediaFile?.type.startsWith('video') ? (
@@ -82,10 +92,8 @@ export default function CreatePost() {
         </div>
       )}
 
-      {/* Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
         <div className="flex flex-wrap gap-4">
-          {/* Upload Media */}
           <button
             onClick={() => fileInputRef.current?.click()}
             className="flex items-center gap-2 text-sm px-4 py-2 rounded-lg bg-purple-50 dark:bg-gray-700 text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-gray-600 transition"
@@ -101,14 +109,12 @@ export default function CreatePost() {
             onChange={handleMediaChange}
           />
 
-          {/* Add Location */}
           <button className="flex items-center gap-2 text-sm px-4 py-2 rounded-lg bg-blue-50 dark:bg-gray-700 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-gray-600 transition">
             <FiMapPin className="w-5 h-5" />
             Location
           </button>
         </div>
 
-        {/* Privacy Toggle + Post Button */}
         <div className="flex flex-wrap sm:flex-nowrap items-center gap-4">
           <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
             <input
@@ -132,12 +138,17 @@ export default function CreatePost() {
 
           <button
             onClick={handlePost}
-            className="bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 text-white text-sm font-medium px-6 py-2 rounded-lg shadow hover:brightness-110 transition-all"
+            disabled={isLoading}
+            className={`${
+              isLoading ? 'opacity-70 cursor-not-allowed' : ''
+            } bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 text-white text-sm font-medium px-6 py-2 rounded-lg shadow hover:brightness-110 transition-all`}
           >
-            Post
+            {isLoading ? 'Posting...' : 'Post'}
           </button>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default CreatePost;

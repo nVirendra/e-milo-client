@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   FiSearch,
   FiHome,
-  FiBell,
   FiUser,
   FiChevronDown,
   FiLogOut,
@@ -10,6 +9,7 @@ import {
   FiMoon,
 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import NotificationBell from '../Notification/NotificationBell';
 
 interface HeaderProps {
   darkMode: boolean;
@@ -42,8 +42,9 @@ const Header: React.FC<HeaderProps> = ({ darkMode, setDarkMode }) => {
 
       <div className="flex items-center gap-5">
         <FiSearch className="w-5 h-5 text-gray-600 dark:text-gray-300 hover:text-purple-600 cursor-pointer transition-colors" />
+        <NotificationBell />
         <div className="flex items-center gap-4">
-          {[FiHome, FiBell].map((Icon, index) => (
+          {[FiHome].map((Icon, index) => (
             <Icon
               key={index}
               className="w-6 h-6 text-gray-600 dark:text-gray-300 hover:text-purple-600 cursor-pointer transition-colors"

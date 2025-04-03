@@ -4,6 +4,8 @@ import { useAuth } from '../../context/AuthContext';
 
 const LeftSidebar: React.FC = () => {
   const { user } = useAuth();
+  const followerCount = user?.followers?.length || 0;
+  const followingCount = user?.following?.length || 0;
 
   return (
     <aside className="lg:col-span-3 space-y-6 sticky top-20 h-fit">
@@ -23,11 +25,11 @@ const LeftSidebar: React.FC = () => {
         </div>
         <div className="flex justify-around mb-6">
           <div className="text-center">
-            <div className="font-bold text-xl">1.2K</div>
+            <div className="font-bold text-xl">{followerCount}</div>
             <div className="text-sm text-gray-500">Followers</div>
           </div>
           <div className="text-center">
-            <div className="font-bold text-xl">589</div>
+            <div className="font-bold text-xl">{followingCount}</div>
             <div className="text-sm text-gray-500">Following</div>
           </div>
         </div>
