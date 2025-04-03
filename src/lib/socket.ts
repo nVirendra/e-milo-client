@@ -7,9 +7,10 @@ export const useSocket = (): Socket | null => {
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    if (user?._id && !socketRef.current) {
+    if (user?.id && !socketRef.current) {
+      console.log('on socket', user.id);
       const socketInstance = io('http://localhost:5000', {
-        query: { userId: user._id },
+        query: { userId: user.id },
         transports: ['websocket'], // optional: forces WebSocket
       });
 
